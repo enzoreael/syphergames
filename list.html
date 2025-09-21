@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Games Directory</title>
 
-  <!-- QUICK THEME PRELOAD: apply saved theme immediately to prevent flash -->
+  <!-- PRELOAD THEME: run immediately to avoid flash -->
   <script>
-    (function(){
+    (function() {
       try {
-        // support both the existing "sypher-theme" key and the index's "theme" key
+        // prefer 'theme' (index uses this), fallback to 'sypher-theme'
         var stored = localStorage.getItem('theme') || localStorage.getItem('sypher-theme');
         var theme = stored;
         if (!theme) {
@@ -19,17 +19,18 @@
       } catch (e) {
         // ignore
       }
-      // reveal the page after theme is set to avoid flash
+      // mark ready so CSS can reveal the page after theme applied
       document.documentElement.classList.add('theme-ready');
     })();
   </script>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
-    /* prevent flash until theme is applied */
+    /* Hide until theme applied to prevent flash */
     html { visibility: hidden; }
-    html.theme-ready { visibility: visible; transition: background 0.3s, color 0.3s; }
+    html.theme-ready { visibility: visible; transition: background 0.25s, color 0.25s; }
 
     :root {
       --primary: #8e7bff;
@@ -286,7 +287,47 @@
   </div>
 
   <script>
-    // Game data - all your games in alphabetical order
+    // ---------- THEME HELPERS ----------
+    function applyTheme(theme) {
+      if (!theme) return;
+      document.documentElement.setAttribute('data-theme', theme);
+      try {
+        // keep both keys in sync so parent/child pages work
+        localStorage.setItem('theme', theme);
+        localStorage.setItem('sypher-theme', theme);
+      } catch (e) {}
+    }
+
+    // Listen for postMessage from parent window (covers cross-origin iframe messaging)
+    window.addEventListener('message', function(event) {
+      try {
+        // optional: restrict origin if you know it
+        if (!event.data) return;
+        if (event.data.type === 'theme-change' && event.data.theme) {
+          applyTheme(event.data.theme);
+        } else if (event.data.type === 'set-theme' && event.data.theme) {
+          applyTheme(event.data.theme);
+        } else if (typeof event.data === 'string' && (event.data === 'light' || event.data === 'dark')) {
+          applyTheme(event.data);
+        }
+      } catch (e) { /* ignore malformed messages */ }
+    });
+
+    // Listen for storage events so other tabs/frames update when localStorage changes
+    window.addEventListener('storage', function(e) {
+      if (!e) return;
+      if (e.key === 'theme' || e.key === 'sypher-theme') {
+        if (e.newValue) applyTheme(e.newValue);
+      }
+    });
+
+    // Sync once from localStorage on load (fallback)
+    try {
+      var t = localStorage.getItem('theme') || localStorage.getItem('sypher-theme');
+      if (t) applyTheme(t);
+    } catch (e) {}
+
+    // ---------- GAMES & SEARCH (unchanged logic) ----------
     const games = [
       { name: "A Small World Cup", path: "/a-small-world-cup/" },
       { name: "Bitlife", path: "/bitlife/" },
@@ -339,78 +380,38 @@
     // DOM elements
     const gamesGrid = document.getElementById('gamesGrid');
     const searchInput = document.getElementById('searchInput');
-    
-    // Display games
+
     function displayGames(gamesArray) {
       gamesGrid.innerHTML = '';
-      
       if (gamesArray.length === 0) {
         gamesGrid.innerHTML = '<div class="no-results">No games found matching your search.</div>';
         return;
       }
-      
       gamesArray.forEach(game => {
         const gameCard = document.createElement('div');
         gameCard.className = 'game-card';
-        gameCard.innerHTML = `
-          <h3 class="game-name">${game.name}</h3>
-        `;
-        
+        gameCard.innerHTML = `<h3 class="game-name">${game.name}</h3>`;
         gameCard.addEventListener('click', () => {
           window.location.href = game.path;
         });
-        
         gamesGrid.appendChild(gameCard);
       });
     }
-    
-    // Filter games based on search input
+
     function filterGames() {
       const searchTerm = searchInput.value.toLowerCase();
-      const filteredGames = games.filter(game => 
+      const filteredGames = games.filter(game =>
         game.name.toLowerCase().includes(searchTerm)
       );
       displayGames(filteredGames);
     }
-    
-    // Initialize theme from localStorage or prefer-color-scheme
-    function initTheme() {
-      let theme = localStorage.getItem('theme') || localStorage.getItem('sypher-theme');
-      
-      if (!theme) {
-        // Check system preference
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-          theme = 'dark';
-        } else {
-          theme = 'light';
-        }
-      }
-      
-      document.documentElement.setAttribute('data-theme', theme);
-      try {
-        // keep both keys in sync so index.html and other pages work
-        localStorage.setItem('theme', theme);
-        localStorage.setItem('sypher-theme', theme);
-      } catch(e) {}
-    }
-    
-    // Listen for theme change events from parent (if embedded)
-    window.addEventListener('message', function(event) {
-      if (event.data && event.data.type === 'theme-change') {
-        document.documentElement.setAttribute('data-theme', event.data.theme);
-        try {
-          localStorage.setItem('theme', event.data.theme);
-          localStorage.setItem('sypher-theme', event.data.theme);
-        } catch(e) {}
-      }
-    });
-    
-    // Event listeners
+
     searchInput.addEventListener('input', filterGames);
-    
-    // Initialize
+
+    // Initialize UI
     document.getElementById('year').textContent = new Date().getFullYear();
-    initTheme();
+    // ensure theme applied on load
+    try { applyTheme(localStorage.getItem('theme') || localStorage.getItem('sypher-theme')); } catch(e) {}
     displayGames(games);
   </script>
 </body>
