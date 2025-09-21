@@ -4,9 +4,33 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Games Directory</title>
+
+  <!-- QUICK THEME PRELOAD: apply saved theme immediately to prevent flash -->
+  <script>
+    (function(){
+      try {
+        // support both the existing "sypher-theme" key and the index's "theme" key
+        var stored = localStorage.getItem('theme') || localStorage.getItem('sypher-theme');
+        var theme = stored;
+        if (!theme) {
+          theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {
+        // ignore
+      }
+      // reveal the page after theme is set to avoid flash
+      document.documentElement.classList.add('theme-ready');
+    })();
+  </script>
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    /* prevent flash until theme is applied */
+    html { visibility: hidden; }
+    html.theme-ready { visibility: visible; transition: background 0.3s, color 0.3s; }
+
     :root {
       --primary: #8e7bff;
       --primary-dark: #6b5ce7;
@@ -238,7 +262,7 @@
   <div class="container">
     <section class="hero">
       <h1 class="hero-title">Games Directory</h1>
-      <p class="hero-subtitle">Browse our collection of unblocked games, sorted alphabetically for your convenience.</p>
+      <p class="hero-subtitle">Browse our collection of games, sorted alphabetically for your convenience.</p> 
       <div class="beta-badge">BETA - Cleaner UI Coming Soon</div>
     </section>
 
@@ -257,7 +281,7 @@
     </section>
 
     <footer>
-      © <span id="year"></span> Sypher Games — Browse our collection of unblocked games
+      © <span id="year"></span> Sypher Games — Browse our collection of games
     </footer>
   </div>
 
@@ -351,7 +375,7 @@
     
     // Initialize theme from localStorage or prefer-color-scheme
     function initTheme() {
-      let theme = localStorage.getItem('sypher-theme');
+      let theme = localStorage.getItem('theme') || localStorage.getItem('sypher-theme');
       
       if (!theme) {
         // Check system preference
@@ -363,13 +387,21 @@
       }
       
       document.documentElement.setAttribute('data-theme', theme);
+      try {
+        // keep both keys in sync so index.html and other pages work
+        localStorage.setItem('theme', theme);
+        localStorage.setItem('sypher-theme', theme);
+      } catch(e) {}
     }
     
     // Listen for theme change events from parent (if embedded)
     window.addEventListener('message', function(event) {
       if (event.data && event.data.type === 'theme-change') {
         document.documentElement.setAttribute('data-theme', event.data.theme);
-        localStorage.setItem('sypher-theme', event.data.theme);
+        try {
+          localStorage.setItem('theme', event.data.theme);
+          localStorage.setItem('sypher-theme', event.data.theme);
+        } catch(e) {}
       }
     });
     
