@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Games Directory</title>
 
-  <!-- PRELOAD THEME: run immediately to avoid flash -->
+  <!-- THEME PRELOAD: run before CSS paints to avoid flash -->
   <script>
     (function() {
       try {
-        // prefer 'theme' (index uses this), fallback to 'sypher-theme'
+        // try stored theme keys (support both names)
         var stored = localStorage.getItem('theme') || localStorage.getItem('sypher-theme');
-        var theme = stored;
-        if (!theme) {
-          theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+        if (!stored) {
+          // fallback to system preference
+          stored = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
         }
-        document.documentElement.setAttribute('data-theme', theme);
+        document.documentElement.setAttribute('data-theme', stored);
       } catch (e) {
-        // ignore
+        // ignore if localStorage access blocked
       }
-      // mark ready so CSS can reveal the page after theme applied
+      // reveal page after theme applied (CSS has rule to hide until .theme-ready)
       document.documentElement.classList.add('theme-ready');
     })();
   </script>
@@ -28,9 +28,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    /* Hide until theme applied to prevent flash */
+    /* hide until preload applied */
     html { visibility: hidden; }
-    html.theme-ready { visibility: visible; transition: background 0.25s, color 0.25s; }
+    html.theme-ready { visibility: visible; transition: background .25s, color .25s; }
 
     :root {
       --primary: #8e7bff;
@@ -42,8 +42,8 @@
       --card-bg: rgba(255, 255, 255, 0.90);
       --card-border: rgba(142, 123, 255, 0.1);
       --card-shadow: 0 18px 70px rgba(142, 123, 255, 0.15);
-      --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      --glow: 0 0 15px rgba(142, 123, 255, 0.5);
+      --transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+      --glow: 0 0 15px rgba(142,123,255,0.5);
     }
 
     [data-theme="dark"] {
@@ -53,217 +53,79 @@
       --text: #f8fafc;
       --text-muted: #9aa3af;
       --bg: linear-gradient(180deg, #0b0b0c 0%, #0a0a0b 100%);
-      --card-bg: rgba(255, 255, 255, 0.02);
-      --card-border: rgba(255, 255, 255, 0.04);
-      --card-shadow: 0 16px 50px rgba(0, 0, 0, 0.38);
-      --glow: 0 0 20px rgba(157, 138, 255, 0.6);
+      --card-bg: rgba(255,255,255,0.02);
+      --card-border: rgba(255,255,255,0.04);
+      --card-shadow: 0 16px 50px rgba(0,0,0,0.38);
+      --glow: 0 0 20px rgba(157,138,255,0.6);
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
+    *{ margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
 
     body {
       background: var(--bg);
       color: var(--text);
       transition: var(--transition);
-      line-height: 1.6;
-      min-height: 100vh;
-      padding: 20px;
+      min-height:100vh;
+      padding:20px;
+      line-height:1.6;
     }
 
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
+    .container { max-width:1200px; margin:0 auto; }
 
-    /* Hero Section */
     .hero {
       background: var(--card-bg);
       backdrop-filter: blur(10px) saturate(120%);
-      border: 1px solid var(--card-border);
-      border-radius: 20px;
-      padding: 40px;
-      margin: 30px 0;
-      text-align: center;
-      box-shadow: var(--card-shadow);
-      transition: var(--transition);
+      border:1px solid var(--card-border);
+      border-radius:20px;
+      padding:40px;
+      margin:30px 0;
+      text-align:center;
+      box-shadow:var(--card-shadow);
+      transition:var(--transition);
     }
+    .hero:hover { transform:translateY(-5px); box-shadow:var(--glow); }
 
-    .hero:hover {
-      transform: translateY(-5px);
-      box-shadow: var(--glow);
+    .hero-title { font-size:2.8rem; font-weight:800; margin-bottom:15px;
+      background:linear-gradient(90deg,var(--primary),var(--primary-dark)); -webkit-background-clip: text; background-clip:text; color:transparent;
     }
+    .hero-subtitle { font-size:1.1rem; color:var(--text-muted); margin-bottom:20px; }
+    .beta-badge { display:inline-block; background:var(--primary); color:#fff; padding:5px 15px; border-radius:50px; font-weight:600; box-shadow:var(--glow); }
 
-    .hero-title {
-      font-size: 2.8rem;
-      font-weight: 800;
-      margin-bottom: 15px;
-      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    .hero-subtitle {
-      font-size: 1.1rem;
-      color: var(--text-muted);
-      margin-bottom: 20px;
-    }
-
-    .beta-badge {
-      display: inline-block;
-      background: var(--primary);
-      color: white;
-      padding: 5px 15px;
-      border-radius: 50px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      margin-top: 15px;
-      box-shadow: var(--glow);
-    }
-
-    /* Search Section */
-    .search-container {
-      margin: 30px 0;
-    }
-
-    .search-box {
-      position: relative;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
+    .search-container { margin:30px 0; }
+    .search-box { position:relative; max-width:600px; margin:0 auto; }
     .search-input {
-      width: 100%;
-      padding: 15px 20px 15px 50px;
-      border-radius: 50px;
-      border: 1px solid var(--card-border);
-      background: var(--card-bg);
-      color: var(--text);
-      font-size: 1rem;
-      transition: var(--transition);
-      box-shadow: var(--card-shadow);
+      width:100%; padding:15px 20px 15px 50px; border-radius:50px; border:1px solid var(--card-border); background:var(--card-bg);
+      color:var(--text); font-size:1rem; transition:var(--transition); box-shadow:var(--card-shadow);
     }
+    .search-input:focus { outline:none; border-color:var(--primary); box-shadow:var(--glow); }
+    .search-icon { position:absolute; left:20px; top:50%; transform:translateY(-50%); color:var(--text-muted); }
 
-    .search-input:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: var(--glow);
-    }
+    .games-section { margin:40px 0; }
+    .section-title { font-size:1.8rem; margin-bottom:25px; color:var(--text); display:inline-block; position:relative; }
+    .section-title::after { content:''; display:block; width:60px; height:4px; background:linear-gradient(90deg,var(--primary),transparent); margin-top:10px; border-radius:2px; }
 
-    .search-icon {
-      position: absolute;
-      left: 20px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--text-muted);
-    }
-
-    /* Games List */
-    .games-section {
-      margin: 40px 0;
-    }
-
-    .section-title {
-      font-size: 1.8rem;
-      margin-bottom: 25px;
-      color: var(--text);
-      position: relative;
-      display: inline-block;
-    }
-
-    .section-title::after {
-      content: '';
-      display: block;
-      width: 60px;
-      height: 4px;
-      background: linear-gradient(90deg, var(--primary), transparent);
-      margin-top: 10px;
-      border-radius: 2px;
-    }
-
-    .games-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 20px;
-    }
-
+    .games-grid { display:grid; grid-template-columns: repeat(auto-fill,minmax(250px,1fr)); gap:20px; }
     .game-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 15px;
-      padding: 20px;
-      transition: var(--transition);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      cursor: pointer;
-      text-align: center;
+      background:var(--card-bg); border:1px solid var(--card-border); border-radius:15px; padding:20px; text-align:center;
+      transition:var(--transition); backdrop-filter:blur(10px); cursor:pointer;
     }
+    .game-card:hover { transform:translateY(-5px); box-shadow:var(--glow); border-color:var(--primary); }
+    .game-name { font-size:1.2rem; font-weight:600; color:var(--text); transition:var(--transition); }
+    .game-card:hover .game-name { color:var(--primary); }
 
-    .game-card:hover {
-      transform: translateY(-5px);
-      box-shadow: var(--glow);
-      border-color: var(--primary);
-    }
+    .no-results { text-align:center; padding:40px; color:var(--text-muted); grid-column:1/-1; }
 
-    .game-name {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: var(--text);
-      transition: var(--transition);
-    }
+    footer { text-align:center; padding:30px 0; margin-top:60px; color:var(--text-muted); border-top:1px solid var(--card-border); }
 
-    .game-card:hover .game-name {
-      color: var(--primary);
-    }
-
-    .no-results {
-      text-align: center;
-      padding: 40px;
-      color: var(--text-muted);
-      grid-column: 1 / -1;
-    }
-
-    /* Footer */
-    footer {
-      text-align: center;
-      padding: 30px 0;
-      margin-top: 60px;
-      color: var(--text-muted);
-      border-top: 1px solid var(--card-border);
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .games-grid {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      }
-      
-      .hero-title {
-        font-size: 2.2rem;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .games-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .hero {
-        padding: 30px 20px;
-      }
-    }
+    @media (max-width:768px){ .games-grid{ grid-template-columns: repeat(auto-fill,minmax(200px,1fr)); } .hero-title{ font-size:2.2rem; } }
+    @media (max-width:480px){ .games-grid{ grid-template-columns: 1fr; } .hero{ padding:30px 20px; } }
   </style>
 </head>
 <body>
   <div class="container">
     <section class="hero">
       <h1 class="hero-title">Games Directory</h1>
-      <p class="hero-subtitle">Browse our collection of games, sorted alphabetically for your convenience.</p> 
+      <p class="hero-subtitle">Browse our collection of games, sorted alphabetically for your convenience.</p>
       <div class="beta-badge">BETA - Cleaner UI Coming Soon</div>
     </section>
 
@@ -276,58 +138,91 @@
 
     <section class="games-section">
       <h2 class="section-title">All Games (A-Z)</h2>
-      <div class="games-grid" id="gamesGrid">
-        <!-- Games will be dynamically inserted here -->
-      </div>
+      <div class="games-grid" id="gamesGrid"><!-- inserted --></div>
     </section>
 
-    <footer>
-      © <span id="year"></span> Sypher Games — Browse our collection of games
-    </footer>
+    <footer>© <span id="year"></span> Sypher Games — Browse our collection of games</footer>
   </div>
 
   <script>
-    // ---------- THEME HELPERS ----------
+    /***** THEME SYNC LOGIC *****/
     function applyTheme(theme) {
       if (!theme) return;
       document.documentElement.setAttribute('data-theme', theme);
       try {
-        // keep both keys in sync so parent/child pages work
         localStorage.setItem('theme', theme);
         localStorage.setItem('sypher-theme', theme);
-      } catch (e) {}
+      } catch (e) { /* ignore storage errors */ }
     }
 
-    // Listen for postMessage from parent window (covers cross-origin iframe messaging)
-    window.addEventListener('message', function(event) {
+    // Listen for messages from parent
+    window.addEventListener('message', function(ev) {
       try {
-        // optional: restrict origin if you know it
-        if (!event.data) return;
-        if (event.data.type === 'theme-change' && event.data.theme) {
-          applyTheme(event.data.theme);
-        } else if (event.data.type === 'set-theme' && event.data.theme) {
-          applyTheme(event.data.theme);
-        } else if (typeof event.data === 'string' && (event.data === 'light' || event.data === 'dark')) {
-          applyTheme(event.data);
+        if (!ev.data) return;
+        // Accept object messages with {type:'theme-change', theme:'dark'} or simple 'dark'/'light' strings
+        if (typeof ev.data === 'string') {
+          if (ev.data === 'dark' || ev.data === 'light') applyTheme(ev.data);
+          return;
         }
-      } catch (e) { /* ignore malformed messages */ }
+        if (ev.data.type === 'theme-change' && ev.data.theme) {
+          applyTheme(ev.data.theme);
+          return;
+        }
+        if (ev.data.type === 'set-theme' && ev.data.theme) {
+          applyTheme(ev.data.theme);
+          return;
+        }
+        // parent may reply to our request with {type:'theme-response', theme: 'dark'}
+        if (ev.data.type === 'theme-response' && ev.data.theme) {
+          applyTheme(ev.data.theme);
+          return;
+        }
+        // optional: parent might use legacy format {theme:'dark'}
+        if (ev.data.theme && (ev.data.theme === 'dark' || ev.data.theme === 'light')) {
+          applyTheme(ev.data.theme);
+        }
+      } catch (e) { /* ignore */ }
     });
 
-    // Listen for storage events so other tabs/frames update when localStorage changes
+    // Listen for storage changes (other windows of same origin)
     window.addEventListener('storage', function(e) {
-      if (!e) return;
-      if (e.key === 'theme' || e.key === 'sypher-theme') {
-        if (e.newValue) applyTheme(e.newValue);
-      }
+      try {
+        if (!e) return;
+        if (e.key === 'theme' || e.key === 'sypher-theme') {
+          if (e.newValue) applyTheme(e.newValue);
+        }
+      } catch (err) {}
     });
 
-    // Sync once from localStorage on load (fallback)
-    try {
-      var t = localStorage.getItem('theme') || localStorage.getItem('sypher-theme');
-      if (t) applyTheme(t);
-    } catch (e) {}
+    // Try a few strategies on load to sync immediately:
+    (function initialSync() {
+      // 1) use localStorage if present
+      try {
+        var t = localStorage.getItem('theme') || localStorage.getItem('sypher-theme');
+        if (t) { applyTheme(t); }
+      } catch (e){}
 
-    // ---------- GAMES & SEARCH (unchanged logic) ----------
+      // 2) try to read parent document's attribute if same-origin
+      try {
+        if (window.parent && window.parent.document) {
+          var pt = window.parent.document.documentElement.getAttribute('data-theme');
+          if (pt === 'dark' || pt === 'light') { applyTheme(pt); return; }
+        }
+      } catch (e) {
+        // cross-origin -> can't access parent DOM
+      }
+
+      // 3) send a request to parent asking for theme (parent can reply with {type:'theme-response', theme: 'dark'})
+      try {
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({ type: 'request-theme' }, '*');
+        }
+      } catch (e) {}
+
+      // 4) as a final safety, ensure the document is using something (already set by preload) — no-op here
+    })();
+
+    /***** GAMES LIST & SEARCH (unchanged logic) *****/
     const games = [
       { name: "A Small World Cup", path: "/a-small-world-cup/" },
       { name: "Bitlife", path: "/bitlife/" },
@@ -377,41 +272,34 @@
       { name: "Zombs Royale", path: "/zombs-royale/" }
     ];
 
-    // DOM elements
     const gamesGrid = document.getElementById('gamesGrid');
     const searchInput = document.getElementById('searchInput');
 
-    function displayGames(gamesArray) {
+    function displayGames(arr) {
       gamesGrid.innerHTML = '';
-      if (gamesArray.length === 0) {
+      if (!arr || arr.length === 0) {
         gamesGrid.innerHTML = '<div class="no-results">No games found matching your search.</div>';
         return;
       }
-      gamesArray.forEach(game => {
-        const gameCard = document.createElement('div');
-        gameCard.className = 'game-card';
-        gameCard.innerHTML = `<h3 class="game-name">${game.name}</h3>`;
-        gameCard.addEventListener('click', () => {
-          window.location.href = game.path;
-        });
-        gamesGrid.appendChild(gameCard);
+      arr.forEach(g => {
+        const d = document.createElement('div');
+        d.className = 'game-card';
+        d.innerHTML = `<h3 class="game-name">${g.name}</h3>`;
+        d.addEventListener('click', ()=> window.location.href = g.path);
+        gamesGrid.appendChild(d);
       });
     }
 
     function filterGames() {
-      const searchTerm = searchInput.value.toLowerCase();
-      const filteredGames = games.filter(game =>
-        game.name.toLowerCase().includes(searchTerm)
-      );
-      displayGames(filteredGames);
+      const q = (searchInput.value || '').toLowerCase();
+      const f = games.filter(g => g.name.toLowerCase().includes(q));
+      displayGames(f);
     }
 
     searchInput.addEventListener('input', filterGames);
 
-    // Initialize UI
+    // init
     document.getElementById('year').textContent = new Date().getFullYear();
-    // ensure theme applied on load
-    try { applyTheme(localStorage.getItem('theme') || localStorage.getItem('sypher-theme')); } catch(e) {}
     displayGames(games);
   </script>
 </body>
