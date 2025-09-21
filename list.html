@@ -55,29 +55,6 @@
       margin: 0 auto;
     }
 
-    /* Theme Toggle */
-    .theme-toggle {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 50px;
-      padding: 10px 15px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: var(--transition);
-      z-index: 100;
-      box-shadow: var(--card-shadow);
-    }
-
-    .theme-toggle:hover {
-      background: var(--primary-light);
-      transform: translateY(-2px);
-    }
-
     /* Hero Section */
     .hero {
       background: var(--card-bg);
@@ -258,15 +235,10 @@
   </style>
 </head>
 <body>
-  <div class="theme-toggle" id="themeToggle">
-    <i class="fas fa-moon"></i>
-    <span>Dark Mode</span>
-  </div>
-
   <div class="container">
     <section class="hero">
       <h1 class="hero-title">Games Directory</h1>
-      <p class="hero-subtitle">Browse our collection of unblocked games, sorted alphabetically for your convenience.</p>
+      <p class="hero-subtitle">Browse our collection of games, sorted alphabetically for your convenience.</p>
       <div class="beta-badge">BETA - Cleaner UI Coming Soon</div>
     </section>
 
@@ -285,7 +257,7 @@
     </section>
 
     <footer>
-      © <span id="year"></span> Sypher Games — Browse our collection of unblocked games
+      © <span id="year"></span> Sypher Games — Browse our collection of games
     </footer>
   </div>
 
@@ -343,7 +315,6 @@
     // DOM elements
     const gamesGrid = document.getElementById('gamesGrid');
     const searchInput = document.getElementById('searchInput');
-    const themeToggle = document.getElementById('themeToggle');
     
     // Display games
     function displayGames(gamesArray) {
@@ -378,27 +349,6 @@
       displayGames(filteredGames);
     }
     
-    // Theme toggle functionality
-    function toggleTheme() {
-      const currentTheme = document.documentElement.getAttribute('data-theme');
-      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-      
-      document.documentElement.setAttribute('data-theme', newTheme);
-      localStorage.setItem('sypher-theme', newTheme);
-      
-      // Update toggle button text and icon
-      const icon = themeToggle.querySelector('i');
-      const text = themeToggle.querySelector('span');
-      
-      if (newTheme === 'dark') {
-        icon.className = 'fas fa-sun';
-        text.textContent = 'Light Mode';
-      } else {
-        icon.className = 'fas fa-moon';
-        text.textContent = 'Dark Mode';
-      }
-    }
-    
     // Initialize theme from localStorage or prefer-color-scheme
     function initTheme() {
       let theme = localStorage.getItem('sypher-theme');
@@ -413,23 +363,18 @@
       }
       
       document.documentElement.setAttribute('data-theme', theme);
-      
-      // Set toggle button state
-      const icon = themeToggle.querySelector('i');
-      const text = themeToggle.querySelector('span');
-      
-      if (theme === 'dark') {
-        icon.className = 'fas fa-sun';
-        text.textContent = 'Light Mode';
-      } else {
-        icon.className = 'fas fa-moon';
-        text.textContent = 'Dark Mode';
-      }
     }
+    
+    // Listen for theme change events from parent (if embedded)
+    window.addEventListener('message', function(event) {
+      if (event.data && event.data.type === 'theme-change') {
+        document.documentElement.setAttribute('data-theme', event.data.theme);
+        localStorage.setItem('sypher-theme', event.data.theme);
+      }
+    });
     
     // Event listeners
     searchInput.addEventListener('input', filterGames);
-    themeToggle.addEventListener('click', toggleTheme);
     
     // Initialize
     document.getElementById('year').textContent = new Date().getFullYear();
