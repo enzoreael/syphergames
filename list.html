@@ -55,29 +55,6 @@
       margin: 0 auto;
     }
 
-    /* Theme Toggle */
-    .theme-toggle {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 50px;
-      padding: 10px 15px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: var(--transition);
-      z-index: 100;
-      box-shadow: var(--card-shadow);
-    }
-
-    .theme-toggle:hover {
-      background: var(--primary-light);
-      transform: translateY(-2px);
-    }
-
     /* Hero Section */
     .hero {
       background: var(--card-bg);
@@ -199,6 +176,7 @@
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       cursor: pointer;
+      text-align: center;
     }
 
     .game-card:hover {
@@ -207,22 +185,11 @@
       border-color: var(--primary);
     }
 
-    .game-icon {
-      font-size: 2rem;
-      margin-bottom: 15px;
-      color: var(--primary);
-      transition: var(--transition);
-    }
-
-    .game-card:hover .game-icon {
-      transform: scale(1.2);
-    }
-
     .game-name {
       font-size: 1.2rem;
       font-weight: 600;
-      margin-bottom: 10px;
       color: var(--text);
+      transition: var(--transition);
     }
 
     .game-card:hover .game-name {
@@ -268,15 +235,10 @@
   </style>
 </head>
 <body>
-  <div class="theme-toggle" id="themeToggle">
-    <i class="fas fa-moon"></i>
-    <span>Dark Mode</span>
-  </div>
-
   <div class="container">
     <section class="hero">
       <h1 class="hero-title">Games Directory</h1>
-      <p class="hero-subtitle">Browse our collection of unblocked games, sorted alphabetically for your convenience.</p>
+      <p class="hero-subtitle">Browse our collection of games, sorted alphabetically for your convenience.</p>
       <div class="beta-badge">BETA - Cleaner UI Coming Soon</div>
     </section>
 
@@ -295,65 +257,64 @@
     </section>
 
     <footer>
-      © <span id="year"></span> Sypher Games — Browse our collection of unblocked games
+      © <span id="year"></span> Sypher Games — Browse our collection of games
     </footer>
   </div>
 
   <script>
     // Game data - all your games in alphabetical order
     const games = [
-      { name: "A Small World Cup", path: "/a-small-world-cup/", icon: "futbol" },
-      { name: "Bitlife", path: "/bitlife/", icon: "heart" },
-      { name: "BlockBlast", path: "/BlockBlast/", icon: "th" },
-      { name: "Blockpost", path: "/blockpost/", icon: "cube" },
-      { name: "Chrome Dino", path: "/chrome-dino/", icon: "dinosaur" },
-      { name: "Cookie Clicker", path: "/cookieclicker/", icon: "cookie" },
-      { name: "Crossy Road", path: "/crossyroad/", icon: "frog" },
-      { name: "Drift Boss", path: "/drift-boss/", icon: "car" },
-      { name: "Drift Hunters", path: "/drift-hunters/", icon: "car-side" },
-      { name: "Drive Mad", path: "/drivemad/", icon: "car-crash" },
-      { name: "Duck Life 1", path: "/ducklife1/", icon: "kiwi-bird" },
-      { name: "Duck Life 2", path: "/ducklife2/", icon: "kiwi-bird" },
-      { name: "Duck Life 3", path: "/ducklife3/", icon: "kiwi-bird" },
-      { name: "Duck Life 4", path: "/ducklife4/", icon: "kiwi-bird" },
-      { name: "Eggy Car", path: "/eggycar/", icon: "egg" },
-      { name: "FNAF", path: "/fnaf/", icon: "ghost" },
-      { name: "FNAF 2", path: "/fnaf2/", icon: "ghost" },
-      { name: "FNAF 3", path: "/fnaf3/", icon: "ghost" },
-      { name: "FNAF 4", path: "/fnaf4/", icon: "ghost" },
-      { name: "Getaway Shootout", path: "/getaway-shootout/", icon: "gun" },
-      { name: "Google Snake", path: "/google-snake/", icon: "snake" },
-      { name: "Hole IO", path: "/hole-io/", icon: "circle" },
-      { name: "Level Devil 2 Poki", path: "/level-devil-2-poki/", icon: "fire" },
-      { name: "Level Devil Poki", path: "/level-devil-poki/", icon: "fire" },
-      { name: "Monkey Mart", path: "/monkeymart/", icon: "store" },
-      { name: "Moto X3M", path: "/motox3m/", icon: "motorcycle" },
-      { name: "Moto X3M Pool", path: "/motox3m-pool/", icon: "motorcycle" },
-      { name: "Moto X3M Spooky", path: "/motox3m-spooky/", icon: "motorcycle" },
-      { name: "Moto X3M Winter", path: "/motox3m-winter/", icon: "motorcycle" },
-      { name: "Paper IO 2", path: "/paperio2/", icon: "map" },
-      { name: "Rocket League", path: "/Rocket-League/", icon: "rocket" },
-      { name: "Rooftop Snipers", path: "/rooftop-snipers/", icon: "user" },
-      { name: "Slope", path: "/slope/", icon: "angle-down" },
-      { name: "Slope 2", path: "/slope2/", icon: "angle-double-down" },
-      { name: "Slope 3", path: "/slope3/", icon: "angles-down" },
-      { name: "Snow Rider 3D", path: "/snowrider3d/", icon: "snowflake" },
-      { name: "Stickman Hook", path: "/stickman-hook/", icon: "link" },
-      { name: "Subway Surfers NY", path: "/subway-surfers-ny/", icon: "train-subway" },
-      { name: "Tank Trouble 2", path: "/tank-trouble-2/", icon: "jet-fighter" },
-      { name: "Temple Run 2", path: "/temple-run-2/", icon: "running" },
-      { name: "Time Shooter 1", path: "/timeshooter1/", icon: "clock" },
-      { name: "Time Shooter 2", path: "/timeshooter2/", icon: "clock" },
-      { name: "Time Shooter 3", path: "/timeshooter3/", icon: "clock" },
-      { name: "Tiny Fishing", path: "/tinyfishing/", icon: "fish" },
-      { name: "Tomb of the Mask Web", path: "/tomb-of-the-mask-web/", icon: "mask" },
-      { name: "Zombs Royale", path: "/zombs-royale/", icon: "skull" }
+      { name: "A Small World Cup", path: "/a-small-world-cup/" },
+      { name: "Bitlife", path: "/bitlife/" },
+      { name: "BlockBlast", path: "/BlockBlast/" },
+      { name: "Blockpost", path: "/blockpost/" },
+      { name: "Chrome Dino", path: "/chrome-dino/" },
+      { name: "Cookie Clicker", path: "/cookieclicker/" },
+      { name: "Crossy Road", path: "/crossyroad/" },
+      { name: "Drift Boss", path: "/drift-boss/" },
+      { name: "Drift Hunters", path: "/drift-hunters/" },
+      { name: "Drive Mad", path: "/drivemad/" },
+      { name: "Duck Life 1", path: "/ducklife1/" },
+      { name: "Duck Life 2", path: "/ducklife2/" },
+      { name: "Duck Life 3", path: "/ducklife3/" },
+      { name: "Duck Life 4", path: "/ducklife4/" },
+      { name: "Eggy Car", path: "/eggycar/" },
+      { name: "FNAF", path: "/fnaf/" },
+      { name: "FNAF 2", path: "/fnaf2/" },
+      { name: "FNAF 3", path: "/fnaf3/" },
+      { name: "FNAF 4", path: "/fnaf4/" },
+      { name: "Getaway Shootout", path: "/getaway-shootout/" },
+      { name: "Google Snake", path: "/google-snake/" },
+      { name: "Hole IO", path: "/hole-io/" },
+      { name: "Level Devil 2 Poki", path: "/level-devil-2-poki/" },
+      { name: "Level Devil Poki", path: "/level-devil-poki/" },
+      { name: "Monkey Mart", path: "/monkeymart/" },
+      { name: "Moto X3M", path: "/motox3m/" },
+      { name: "Moto X3M Pool", path: "/motox3m-pool/" },
+      { name: "Moto X3M Spooky", path: "/motox3m-spooky/" },
+      { name: "Moto X3M Winter", path: "/motox3m-winter/" },
+      { name: "Paper IO 2", path: "/paperio2/" },
+      { name: "Rocket League", path: "/Rocket-League/" },
+      { name: "Rooftop Snipers", path: "/rooftop-snipers/" },
+      { name: "Slope", path: "/slope/" },
+      { name: "Slope 2", path: "/slope2/" },
+      { name: "Slope 3", path: "/slope3/" },
+      { name: "Snow Rider 3D", path: "/snowrider3d/" },
+      { name: "Stickman Hook", path: "/stickman-hook/" },
+      { name: "Subway Surfers NY", path: "/subway-surfers-ny/" },
+      { name: "Tank Trouble 2", path: "/tank-trouble-2/" },
+      { name: "Temple Run 2", path: "/temple-run-2/" },
+      { name: "Time Shooter 1", path: "/timeshooter1/" },
+      { name: "Time Shooter 2", path: "/timeshooter2/" },
+      { name: "Time Shooter 3", path: "/timeshooter3/" },
+      { name: "Tiny Fishing", path: "/tinyfishing/" },
+      { name: "Tomb of the Mask Web", path: "/tomb-of-the-mask-web/" },
+      { name: "Zombs Royale", path: "/zombs-royale/" }
     ];
 
     // DOM elements
     const gamesGrid = document.getElementById('gamesGrid');
     const searchInput = document.getElementById('searchInput');
-    const themeToggle = document.getElementById('themeToggle');
     
     // Display games
     function displayGames(gamesArray) {
@@ -368,7 +329,6 @@
         const gameCard = document.createElement('div');
         gameCard.className = 'game-card';
         gameCard.innerHTML = `
-          <i class="fas fa-${game.icon} game-icon"></i>
           <h3 class="game-name">${game.name}</h3>
         `;
         
@@ -389,27 +349,6 @@
       displayGames(filteredGames);
     }
     
-    // Theme toggle functionality
-    function toggleTheme() {
-      const currentTheme = document.documentElement.getAttribute('data-theme');
-      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-      
-      document.documentElement.setAttribute('data-theme', newTheme);
-      localStorage.setItem('sypher-theme', newTheme);
-      
-      // Update toggle button text and icon
-      const icon = themeToggle.querySelector('i');
-      const text = themeToggle.querySelector('span');
-      
-      if (newTheme === 'dark') {
-        icon.className = 'fas fa-sun';
-        text.textContent = 'Light Mode';
-      } else {
-        icon.className = 'fas fa-moon';
-        text.textContent = 'Dark Mode';
-      }
-    }
-    
     // Initialize theme from localStorage or prefer-color-scheme
     function initTheme() {
       let theme = localStorage.getItem('sypher-theme');
@@ -424,23 +363,10 @@
       }
       
       document.documentElement.setAttribute('data-theme', theme);
-      
-      // Set toggle button state
-      const icon = themeToggle.querySelector('i');
-      const text = themeToggle.querySelector('span');
-      
-      if (theme === 'dark') {
-        icon.className = 'fas fa-sun';
-        text.textContent = 'Light Mode';
-      } else {
-        icon.className = 'fas fa-moon';
-        text.textContent = 'Dark Mode';
-      }
     }
     
     // Event listeners
     searchInput.addEventListener('input', filterGames);
-    themeToggle.addEventListener('click', toggleTheme);
     
     // Initialize
     document.getElementById('year').textContent = new Date().getFullYear();
