@@ -1,210 +1,297 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>404 - Page Not Found</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>404 — Page not found</title>
 
-  <!-- QUICK THEME PRELOAD: apply saved theme immediately to prevent flash -->
+  <!-- THEME PRELOAD: apply saved theme immediately to prevent FOUC -->
   <script>
     (function(){
       try {
-        // support both the existing "sypher-theme" key and the index's "theme" key
         var stored = localStorage.getItem('theme') || localStorage.getItem('sypher-theme');
-        var theme = stored;
-        if (!theme) {
-          theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+        if (!stored) {
+          stored = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
         }
-        document.documentElement.setAttribute('data-theme', theme);
-      } catch (e) {
-        // ignore
-      }
-      // reveal the page after theme is set to avoid flash
+        document.documentElement.setAttribute('data-theme', stored);
+      } catch (e) { /* ignore */ }
       document.documentElement.classList.add('theme-ready');
     })();
   </script>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    /* prevent flash until theme is applied */
-    html { visibility: hidden; }
-    html.theme-ready { visibility: visible; transition: background 0.3s, color 0.3s; }
 
-    :root {
+  <style>
+    /* hide until theme applied */
+    html { visibility: hidden; }
+    html.theme-ready { visibility: visible; transition: background .25s, color .25s; }
+
+    :root{
       --primary: #8e7bff;
       --primary-dark: #6b5ce7;
-      --primary-light: #f0edff;
+      --bg: linear-gradient(180deg,#fbfbfd 0%,#f7f6fb 100%);
+      --card: rgba(255,255,255,0.92);
       --text: #0f1724;
-      --text-muted: #6b7280;
-      --bg: linear-gradient(180deg, #fbfbfd 0%, #f7f6fb 100%);
-      --card-bg: rgba(255, 255, 255, 0.90);
-      --card-border: rgba(142, 123, 255, 0.1);
-      --card-shadow: 0 18px 70px rgba(142, 123, 255, 0.15);
-      --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      --glow: 0 0 15px rgba(142, 123, 255, 0.5);
+      --muted: #6b7280;
+      --shadow: 0 18px 70px rgba(142,123,255,0.12);
+      --radius: 18px;
+      --transition: all .32s cubic-bezier(.2,.9,.2,1);
     }
 
-    [data-theme="dark"] {
+    [data-theme="dark"]{
       --primary: #9d8aff;
       --primary-dark: #8e7bff;
-      --primary-light: rgba(142, 123, 255, 0.12);
+      --bg: linear-gradient(180deg,#0b0b0c 0%,#0a0a0b 100%);
+      --card: rgba(255,255,255,0.03);
       --text: #f8fafc;
-      --text-muted: #9aa3af;
-      --bg: linear-gradient(180deg, #0b0b0c 0%, #0a0a0b 100%);
-      --card-bg: rgba(255, 255, 255, 0.02);
-      --card-border: rgba(255, 255, 255, 0.04);
-      --card-shadow: 0 16px 50px rgba(0, 0, 0, 0.38);
-      --glow: 0 0 20px rgba(157, 138, 255, 0.6);
+      --muted: #9aa3af;
+      --shadow: 0 16px 50px rgba(0,0,0,0.45);
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    *{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial;}
+
+    body{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:28px;
+      background:var(--bg);
+      color:var(--text);
+      transition:var(--transition);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
     }
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      transition: var(--transition);
-      line-height: 1.6;
-      min-height: 100vh;
-      padding: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .card{
+      width:100%;
+      max-width:980px;
+      background:var(--card);
+      border-radius:var(--radius);
+      padding:36px;
+      box-shadow:var(--shadow);
+      border:1px solid rgba(0,0,0,0.04);
+      display:grid;
+      grid-template-columns: 1fr 420px;
+      gap:28px;
+      align-items:center;
     }
 
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      text-align: center;
+    .left {
+      padding:6px 8px;
     }
 
-    /* 404 Section */
-    .error-hero {
-      background: var(--card-bg);
-      backdrop-filter: blur(10px) saturate(120%);
-      border: 1px solid var(--card-border);
-      border-radius: 20px;
-      padding: 60px 40px;
-      margin: 30px 0;
-      box-shadow: var(--card-shadow);
-      transition: var(--transition);
+    .eyebrow {
+      display:inline-block;
+      font-weight:700;
+      background:linear-gradient(90deg,var(--primary),var(--primary-dark));
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+      font-size:14px;
+      margin-bottom:8px;
     }
 
-    .error-hero:hover {
-      transform: translateY(-5px);
-      box-shadow: var(--glow);
+    h1.error-code{
+      font-size:64px;
+      line-height:1;
+      margin:0 0 10px 0;
+      letter-spacing:2px;
+      color:var(--primary);
+      text-shadow: 0 6px 28px rgba(142,123,255,0.06);
     }
 
-    .error-title {
-      font-size: 4rem;
-      font-weight: 800;
-      margin-bottom: 15px;
-      color: var(--primary);
-      text-shadow: var(--glow);
-      letter-spacing: 2px;
+    h2 {
+      font-size:22px;
+      margin:0 0 8px 0;
+      color:var(--text);
+      font-weight:700;
     }
 
-    .error-subtitle {
-      font-size: 1.4rem;
-      color: var(--text-muted);
-      margin-bottom: 30px;
+    p.lead {
+      margin:0 0 20px 0;
+      color:var(--muted);
+      font-size:15px;
+      max-width:60ch;
     }
 
-    .return-button {
-      display: inline-block;
-      background: var(--primary);
-      color: white;
-      padding: 12px 30px;
-      border-radius: 50px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      text-decoration: none;
-      transition: var(--transition);
-      box-shadow: var(--glow);
-      border: none;
-      cursor: pointer;
+    .actions {
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:12px;
     }
 
-    .return-button:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 0 25px rgba(142, 123, 255, 0.7);
-      background: var(--primary-dark);
+    .btn {
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:12px 18px;
+      border-radius:999px;
+      font-weight:700;
+      text-decoration:none;
+      cursor:pointer;
+      border:0;
+      transition:var(--transition);
     }
 
-    /* Footer */
-    footer {
-      text-align: center;
-      padding: 30px 0;
-      margin-top: 60px;
-      color: var(--text-muted);
-      border-top: 1px solid var(--card-border);
+    .btn-primary {
+      background:linear-gradient(90deg,var(--primary),var(--primary-dark));
+      color:#fff;
+      box-shadow:0 10px 30px rgba(99,72,255,0.12);
     }
 
-    /* Responsive */
-    @media (max-width: 768px) {
-      .error-title {
-        font-size: 3rem;
-      }
-      
-      .error-hero {
-        padding: 40px 20px;
-      }
+    .btn-ghost {
+      background: transparent;
+      color:var(--text);
+      border:1px solid rgba(0,0,0,0.06);
+      padding:11px 16px;
     }
 
-    @media (max-width: 480px) {
-      .error-title {
-        font-size: 2.5rem;
-      }
-      
-      .error-subtitle {
-        font-size: 1.1rem;
-      }
+    .btn:focus { outline: 3px solid rgba(142,123,255,0.12); outline-offset:3px; }
+
+    .illustration {
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:10px;
+    }
+
+    /* left footer aligned with actions (left edge) */
+    .left-footer {
+      margin-top:18px;
+      color:var(--muted);
+      font-size:13px;
+      text-align:left;
+    }
+
+    /* gently responsive */
+    @media (max-width:980px){
+      .card{ grid-template-columns: 1fr; text-align:center; }
+      .illustration{ order:-1; }
+      .left{ padding:0; }
+      .left-footer { text-align:center; } /* center on small screens */
+      h1.error-code{ font-size:48px; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <section class="error-hero">
-      <h1 class="error-title">404 GAME NOT FOUND</h1>
-      <p class="error-subtitle">Ooppss, we cant find the page youre looking for :(</p>
-      <a href="/list.html" class="return-button">Return to Main Page</a>
-    </section>
+  <div class="card" role="main" aria-labelledby="err-title">
+    <div class="left">
+      <div class="eyebrow">PAGE NOT FOUND</div>
+      <h1 class="error-code" id="err-title">404</h1>
+      <h2>We couldn't find that game</h2>
+      <p class="lead">The game you're trying to reach might have moved, been renamed, or removed. Try returning to the games list or go back to the previous page.</p>
 
-    <footer>
-      © <span id="year"></span> Sypher Games — Browse our collection of games
-    </footer>
+      <div class="actions" role="group" aria-label="404 actions">
+        <button class="btn btn-primary" id="homeBtn" title="Go to game list">
+          <i class="fa-solid fa-house"></i>
+          Browse games
+        </button>
+
+        <button class="btn btn-ghost" id="backBtn" title="Go back">
+          <i class="fa-solid fa-arrow-left"></i>
+          Go back
+        </button>
+      </div>
+
+      <!-- left-aligned year (aligned to the left edge of actions) -->
+      <div class="left-footer" id="leftFooter">© 2025 Sypher Games</div>
+    </div>
+
+    <div class="illustration" aria-hidden="true">
+      <!-- Simple friendly SVG illustration -->
+      <svg width="320" height="220" viewBox="0 0 640 440" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sad game console illustration">
+        <defs>
+          <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0" stop-color="#8e7bff"/>
+            <stop offset="1" stop-color="#6b5ce7"/>
+          </linearGradient>
+        </defs>
+        <rect x="40" y="50" width="560" height="330" rx="28" fill="url(#g1)" opacity="0.12"/>
+        <rect x="120" y="110" width="400" height="220" rx="18" fill="currentColor" opacity="0.06"/>
+        <g transform="translate(200,140)">
+          <rect x="0" y="0" width="240" height="140" rx="12" fill="#ffffff" opacity="0.92"/>
+          <rect x="18" y="18" width="204" height="88" rx="8" fill="#f4f6fb"/>
+          <circle cx="60" cy="70" r="8" fill="#e8eaf6"/>
+          <circle cx="120" cy="70" r="8" fill="#e8eaf6"/>
+          <circle cx="180" cy="70" r="8" fill="#e8eaf6"/>
+          <text x="40" y="60" style="font:28px Poppins, sans-serif; fill:#6b7280;">Game not found</text>
+        </g>
+      </svg>
+    </div>
   </div>
 
   <script>
-    // Initialize theme from localStorage or prefer-color-scheme
-    function initTheme() {
-      let theme = localStorage.getItem('theme') || localStorage.getItem('sypher-theme');
-      
-      if (!theme) {
-        // Check system preference
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-          theme = 'dark';
-        } else {
-          theme = 'light';
-        }
-      }
-      
+    // THEME HANDLERS (sync with parent & other tabs)
+    function applyTheme(theme) {
+      if (!theme) return;
       document.documentElement.setAttribute('data-theme', theme);
       try {
-        // keep both keys in sync so index.html and other pages work
         localStorage.setItem('theme', theme);
         localStorage.setItem('sypher-theme', theme);
-      } catch(e) {}
+      } catch (e) {}
     }
-    
-    // Initialize
-    document.getElementById('year').textContent = new Date().getFullYear();
-    initTheme();
+
+    // Accept messages from parent (postMessage)
+    window.addEventListener('message', function(ev){
+      try {
+        if (!ev.data) return;
+        if (typeof ev.data === 'string') {
+          if (ev.data === 'dark' || ev.data === 'light') applyTheme(ev.data);
+          return;
+        }
+        if (ev.data.type === 'theme-change' && ev.data.theme) applyTheme(ev.data.theme);
+        if (ev.data.type === 'theme-response' && ev.data.theme) applyTheme(ev.data.theme);
+        if (ev.data.type === 'set-theme' && ev.data.theme) applyTheme(ev.data.theme);
+      } catch (e) {}
+    });
+
+    // reply when parent asks
+    window.addEventListener('message', function(ev){
+      try {
+        if (ev.data && ev.data.type === 'request-theme') {
+          var t = localStorage.getItem('sypher-theme') || localStorage.getItem('theme') || 'light';
+          try { ev.source.postMessage({ type:'theme-response', theme: t }, ev.origin || '*'); } catch(e){}
+        }
+      } catch(e){}
+    });
+
+    // watch for localStorage changes (other tabs)
+    window.addEventListener('storage', function(e){
+      try {
+        if (!e) return;
+        if (e.key === 'theme' || e.key === 'sypher-theme') {
+          if (e.newValue) applyTheme(e.newValue);
+        }
+      } catch(e){}
+    });
+
+    // try localStorage and parent DOM on load
+    (function initialSync(){
+      try {
+        var t = localStorage.getItem('theme') || localStorage.getItem('sypher-theme');
+        if (t) { applyTheme(t); }
+      } catch(e){}
+      try {
+        if (window.parent && window.parent.document) {
+          var pt = window.parent.document.documentElement.getAttribute('data-theme');
+          if (pt === 'dark' || pt === 'light') { applyTheme(pt); return; }
+        }
+      } catch(e){}
+      try { if (window.parent && window.parent !== window) window.parent.postMessage({ type:'request-theme' }, '*'); } catch(e){}
+    })();
+
+    // Buttons
+    document.getElementById('homeBtn').addEventListener('click', function(){
+      location.href = '/list.html';
+    });
+    document.getElementById('backBtn').addEventListener('click', function(){
+      if (history.length > 1) history.back();
+      else location.href = '/';
+    });
+
+    // set left footer year to 2025 explicitly
+    document.getElementById('leftFooter').textContent = '© 2025 Sypher Games';
   </script>
 </body>
 </html>
