@@ -145,6 +145,44 @@
   </div>
 
   <script>
+    /***** URL TRACKING - Notify parent when URL changes *****/
+    function notifyParentUrlChange() {
+      if (window.parent && window.parent !== window) {
+        try {
+          window.parent.postMessage({
+            type: 'url-change',
+            url: window.location.href
+          }, 'https://sypherweb.com');
+        } catch (e) {
+          console.log('Could not notify parent of URL change');
+        }
+      }
+    }
+
+    // Notify parent on page load
+    window.addEventListener('load', function() {
+      notifyParentUrlChange();
+    });
+
+    // Override history methods to track navigation
+    const originalPushState = history.pushState;
+    const originalReplaceState = history.replaceState;
+
+    history.pushState = function(state, title, url) {
+      originalPushState.apply(this, arguments);
+      setTimeout(notifyParentUrlChange, 100);
+    };
+
+    history.replaceState = function(state, title, url) {
+      originalReplaceState.apply(this, arguments);
+      setTimeout(notifyParentUrlChange, 100);
+    };
+
+    // Track hash changes
+    window.addEventListener('hashchange', function() {
+      setTimeout(notifyParentUrlChange, 100);
+    });
+
     /***** THEME SYNC LOGIC *****/
     function applyTheme(theme) {
       if (!theme) return;
@@ -285,7 +323,11 @@
         const d = document.createElement('div');
         d.className = 'game-card';
         d.innerHTML = `<h3 class="game-name">${g.name}</h3>`;
-        d.addEventListener('click', ()=> window.location.href = g.path);
+        d.addEventListener('click', ()=> {
+          // Notify parent of URL change before navigating
+          notifyParentUrlChange();
+          window.location.href = g.path;
+        });
         gamesGrid.appendChild(d);
       });
     }
