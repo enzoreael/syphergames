@@ -260,7 +260,7 @@
       // 4) as a final safety, ensure the document is using something (already set by preload) — no-op here
     })();
 
-    /***** GAMES LIST & SEARCH (unchanged logic) *****/
+    /***** GAMES LIST & SEARCH (with automatic sorting) *****/
     const games = [
       { name: "A Small World Cup", path: "/a-small-world-cup/" },
       { name: "Bitlife", path: "/bitlife/" },
@@ -307,11 +307,28 @@
       { name: "Time Shooter 3", path: "/timeshooter3/" },
       { name: "Tiny Fishing", path: "/tinyfishing/" },
       { name: "Tomb of the Mask Web", path: "/tomb-of-the-mask-web/" },
-      { name: "Zombs Royale", path: "/zombs-royale/" }
+      { name: "Zombs Royale", path: "/zombs-royale/" },
+      { name: "Super Mario 64", path: "/super-mario/" },
+      { name: "Sonic the Hedgehog Remastered", path: "/sonic-the-hedgehog-remastered/" },
+      { name: "Super Star Car", path: "/super-star-car/" },
+      { name: "Recoil", path: "/recoil/" }
     ];
 
     const gamesGrid = document.getElementById('gamesGrid');
     const searchInput = document.getElementById('searchInput');
+
+    // Function to sort games alphabetically by name
+    function sortGamesAlphabetically(gamesArray) {
+      return gamesArray.sort((a, b) => {
+        // Convert names to lowercase for case-insensitive sorting
+        const nameA = a.name.toLowerCase();
+        const nameB = b.name.toLowerCase();
+        
+        if (nameA < nameB) return -1;
+        if (nameA > nameB) return 1;
+        return 0;
+      });
+    }
 
     function displayGames(arr) {
       gamesGrid.innerHTML = '';
@@ -319,7 +336,11 @@
         gamesGrid.innerHTML = '<div class="no-results">No games found matching your search.</div>';
         return;
       }
-      arr.forEach(g => {
+      
+      // Sort the array alphabetically before displaying
+      const sortedGames = sortGamesAlphabetically(arr);
+      
+      sortedGames.forEach(g => {
         const d = document.createElement('div');
         d.className = 'game-card';
         d.innerHTML = `<h3 class="game-name">${g.name}</h3>`;
